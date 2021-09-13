@@ -17,10 +17,12 @@
                         <th scope="row">{{ $post->id}}</th>
                         <td>{{ $post->titolo}}</td>
                         <td>
-                            <a href="" class="btn btn-primary">Show</a>
+                            <a href="{{route('admin.posts.show', $post->id)}}" class="btn btn-primary">Show</a>
                             <a href="" class="btn btn-secondary">Edit</a>
-                            <form action="">
-                                @call_user_func
+                            <form action="" method="post" class="d-inline-block">
+                                @csrf
+                                @method('DELETE')
+                                <input type="submit" value="delete" class="btn btn-danger">
                             </form>
                         </td>
                         
