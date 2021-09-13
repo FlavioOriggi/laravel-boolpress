@@ -12,8 +12,8 @@
                 <p class="card-text">{{ $post->content }}</p>                
             </div>            
         </div>
-        <div>
-            <a href="#" class="btn btn-primary">Tona indietro</a>
+        <div class="mt-3">
+            <a href="{{ route('admin.posts.index') }}" class="btn btn-primary">Tona indietro</a>
         </div>
     </div>
     
