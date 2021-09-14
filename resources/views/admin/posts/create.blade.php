@@ -23,10 +23,9 @@
                 @enderror" id="titolo" name="title" value="{{ old('title')}}">
                 @error('title')
                     <div class="alert alert-danger">{{ $message }} </div>                    
-                @enderror
-                
-                                
+                @enderror                                             
             </div>
+
             <div class="mb-3">
                 <label for="desc" class="form-label">Descrizione</label>
                 <textarea class="form-control
@@ -36,7 +35,8 @@
                 @error('content')
                     <div class="alert alert-danger">{{ $message }} </div>                    
                 @enderror
-            </div>            
+            </div>    
+                    
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
         
