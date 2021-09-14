@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-
 use App\Post;
 
 class PostController extends Controller
@@ -40,14 +39,36 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'title' => 'required\max:255',
+            'content' => 'required'
+        ]);
+
+
+
         $data = $request->all();
 
         $new_post = new Post();
-        $new_post->slug = Str::slug($data['title'],'-');
+
+        $slug = Str::slug($data['title'],'-');
+
+        $slug_base = $slug;
+        $slug_presente = Post::where('slug', $slug)->first();
+        $contatore = 1;
+
+        while($slug_presente){
+            $slug = $slug_base . '-' .$contatore ;
+
+            $slug_presente = Post::where('slug', $slug)->first();
+
+            $contatore++;
+        }
+
+
+        $new_post->slug = $slug;
         $new_post->fill($data);
 
-        $new_post->save();  
-        
+        $new_post->save();          
         return redirect()->route('admin.posts.index');
     }
 
@@ -57,10 +78,19 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Post $post)
+    public function show($slug)
     {
+        $post = Post::where('slug', $slug)->first();
         return view('admin.posts.show', compact ('post'));
     }
+
+    // collegamento con id
+    // public function show(Post $post)
+    // {        
+    //     return view('admin.posts.show', compact ('post'));
+    // }
+
+
 
     /**
      * Show the form for editing the specified resource.
@@ -68,9 +98,9 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Post $post)
     {
-        //
+        return view('admin.posts.edit', compact('post'));
     }
 
     /**
@@ -80,9 +110,38 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Post $post)
     {
-        //
+        $request->validate([]);
+
+
+        $data = $request->all();
+        if($data['title'] != $post->title){
+
+            $slug = Str::slug($data['title'], '-');
+            $slug_base = $slug;
+
+            $slug_presente = Post::where('slug', $slug)->first();
+
+            $contatore = 1;
+            while($slug_presente){
+
+                $slug = $slug_base . '-' .$contatore;
+
+                $slug_presente = Post::where('slug', $slug)->first();
+
+                $contatore++;
+            }
+
+            $data['slug'] = $slug;
+
+
+
+        }
+        $post->update($data);
+
+        return redirect()->route('admin.posts.index')->with('update', 'Modificato correttamente l\'id ' .$post->id);
+
     }
 
     /**
@@ -91,8 +150,9 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Post $post)
     {
-        //
+        $post->delete();
+        return redirect()->route('admin.posts.index');
     }
 }
