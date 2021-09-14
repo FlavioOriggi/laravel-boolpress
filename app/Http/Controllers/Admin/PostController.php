@@ -40,7 +40,7 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required\max:255',
+            'title' => 'required|max:255',
             'content' => 'required'
         ]);
 
@@ -51,8 +51,8 @@ class PostController extends Controller
         $new_post = new Post();
 
         $slug = Str::slug($data['title'],'-');
-
         $slug_base = $slug;
+        
         $slug_presente = Post::where('slug', $slug)->first();
         $contatore = 1;
 
@@ -63,7 +63,6 @@ class PostController extends Controller
 
             $contatore++;
         }
-
 
         $new_post->slug = $slug;
         $new_post->fill($data);
@@ -153,6 +152,6 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         $post->delete();
-        return redirect()->route('admin.posts.index');
+        return redirect()->route('admin.posts.index')->with('delete', 'Hai cancellato l\'id ' .$post->id);
     }
 }
